@@ -1,0 +1,131 @@
+<%- include('../includes/header.ejs') %>
+</head>
+
+<body>
+  <header>
+    <%- include('../includes/navbar.ejs') %>
+
+    <!-- Jumbotron -->
+    <div class="p-5 text-center bg-light" style="margin-top: 58px">
+      <h1 class="my-1 h4">My articles</h1>
+      
+    </div>
+    <!-- Jumbotron -->
+  </header>
+
+  <!-- Flash messages -->
+  <div id="flashMessage" data-mdb-position="top-center" data-mdb-hidden="true" data-mdb-offset="64" data-mdb-delay="5000" data-mdb-autohide="true" class="alert fade text-center d-flex align-items-center justify-content-center shadow-2-strong" role="alert">
+    <p class="m-0"><!-- text here --></p>      
+    <button type="button" class="close" onclick="hideMessage()">
+      <span aria-hidden="true" class="ms-4"><i class="fas fa-times"></i></span>
+    </button>
+  </div> 
+  <!-- Flash messages -->
+
+  <!-- Main Layout -->
+  <main class="my-4">
+    <div class="container">
+      <div class="d-flex justify-content-center align-items-center mb-4">
+        <a href="/blog/new-article" class="stretched-link btn btn-primary btn-floating btn-lg m-0"><i class="fas fa-plus me-2"></i></a> 
+      </div>
+      <div class="">
+      <table class="table table-striped table-responsive-md text-nowrap btn-table">
+        <thead>
+          <tr>
+            <th>Title</th>
+            <th><i class="fas fa-heart text-danger"></i></th>
+            <th><i class="fas fa-comments text-primary"></i></th>
+            <th>Created</th>
+            <th>Last updated</th>
+            <th>Published</th>
+            <th></th>
+          </tr>
+        </thead>
+        
+        <tbody>
+          <% articles.forEach( article => { %>
+          <tr id="row-<%= article._id%>">
+            <td class="position-relative"><a href="./my-articles/<%= article._id%>" class=""><%= article.title %></a></td>
+            <td><%= article.likes.length %></td>
+            <td><%= article.comments.length %></td>
+            <td><%= new Intl.DateTimeFormat('en-GB', { year: 'numeric', month: 'numeric', day: 'numeric'}).format(article.createdAt); %></td>
+            <td><%= new Intl.DateTimeFormat('en-GB', { year: 'numeric', month: 'numeric', day: 'numeric'}).format(article.updatedAt); %></td>
+            <td data-published="<%= article._id%>"><%- article.publishedAt ? '<i class="fas fa-check text-success"></i>' : '<i class="fas fa-times text-danger"></i>' %></td>
+            
+          
+            <td>
+              <a role="button" href="./update-article/<%= article._id%>" class="btn btn-warning btn-sm ms-1"><i class="fas fa-edit"></i></a>
+              
+              <input type="hidden" name="id" value="<%= article._id %>">
+              <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+              
+              <button 
+              type="button" 
+              class="btn btn-sm ms-1 <%= article.publishedAt ? "btn-light" : "btn-success" %>"
+              onclick="<%= article.publishedAt ? "unpublishArticle(this)" : "publishArticle(this)" %>"
+              >
+              <%- article.publishedAt ? '<i class="fas fa-eye-slash"></i>' : '<i class="fas fa-eye"></i>' %>
+              </button>
+               
+              <button 
+              type="button" 
+              class="btn btn-danger btn-sm ms-1" 
+              onclick="deleteModal.show(this)" 
+              data-article="<%= article.id %>"
+              data-postTitle="<%= article.title %>">
+                <i class="far fa-trash-alt"></i>
+              </button>
+            </td>
+          </tr>
+          <% }); %>          
+        </tbody>
+        
+        </table>
+      </div>
+        
+    </div>
+ </main>
+
+ <!-- Modal for deleting an article-->
+<div
+class="modal fade"
+id="deleteModal"
+tabindex="-1"
+aria-labelledby="deleteModalLabel"
+aria-hidden="true"
+>
+<div class="modal-dialog">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h5 class="modal-title" id="deleteModalLabel">Delete article?</h5>
+      <button
+        type="button"
+        class="btn-close"
+        data-mdb-dismiss="modal"
+        aria-label="Close"
+      ></button>
+    </div>
+    <div class="modal-body">
+      <p>Please confirm you wish to delete the article <strong id="modalPostTitle"></strong>.</p>
+      <p>This action can't be undone.</p>
+    </div>
+    <div class="modal-footer">
+      <input type="hidden" name="id" id="modalDeleteInput" value="">
+      <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+      <button type="button" class="btn btn-danger" onclick="deleteArticle(this)" data-mdb-dismiss="modal">Delete</button>      
+      <button type="button" class="btn btn-primary" data-mdb-dismiss="modal">
+        Cancel
+      </button>
+    </div>
+  </div>
+</div>
+</div>
+
+  <%- include('../includes/footer.ejs') %>
+
+ 
+
+  <script src="/js/flash-messages.js"></script>
+  <script src="/js/blog.js"></script>
+</body>
+</html>

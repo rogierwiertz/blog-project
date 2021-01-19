@@ -1,0 +1,27 @@
+.avatar {
+    border: 1px solid #111;
+    border-radius: 50%;
+    height: 10rem;
+    width: 10rem;
+    margin-right: 1rem;    
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: center;
+    color: #FFF;
+    text-align: center;
+    line-height: 10rem;
+    font-size: 4rem !important;
+    
+   
+
+}
+
+.small {
+    height: 3rem;
+    width: 3rem;
+    margin-right: 0;
+    margin-left: 0.5rem;
+    line-height: 3rem;
+    font-size: 1rem !important;
+}
+

@@ -1,0 +1,106 @@
+
+<%- include('../includes/header.ejs') %>
+<%- include('../includes/tiny-mce.ejs') %>
+</head>
+
+<body>
+  <header>
+    <%- include('../includes/navbar.ejs') %>
+
+    <!-- Jumbotron -->
+    <div class="p-5 text-center bg-light" style="margin-top: 58px">
+      <h1 class="my-1 h4">Edit article</h1>
+    </div>
+    <!-- Jumbotron -->
+  </header>
+
+  <!-- Main Layout -->
+  <main class="my-4">
+    <div class="container">
+        <% if( flashMessage ) { %>
+        <div class="alert alert-warning my-4" role="alert">
+            <p class="mb-0"><%= flashMessage %></p>
+        </div>        
+        <% } %> 
+
+        <form action="/blog/update-article?_csrf=<%= csrfToken %>" method="POST" enctype="multipart/form-data">
+            <div class="form-outline mb-4">
+            <input class="form-control" type="text" name="title" id="title" value="<%= article.title %>" />
+            <label for="title" class="form-label">Title</label>
+            </div>
+            <div class="form-outline mb-4">
+            <input class="form-control" type="text" name="description" id="description" value="<%= article.description %>" />
+            <label for="description" class="form-label">Description</label>
+            </div>
+            <div class="row mb-4 d-flex align-items-end">
+                <div class="col-md-8">
+                  <label for="image" class="form-label">Image</label>
+                  <input class="form-control" type="file" name="image" id="image"  >
+                </div>
+                
+                
+                    <div class="col-md-4 mt-4 my-md-0">
+                        <!-- Button trigger modal -->
+                        <button
+                          type="button"
+                          class="btn btn-primary w-100 "
+                          data-mdb-toggle="modal"
+                          data-mdb-target="#imagePreview"
+                        >
+                          Preview image
+                        </button> 
+                    </div>
+                
+            </div>
+            
+            
+            <div class="form-outline mb-4">
+            <textarea class="form-control" name="content" id="content" rows="20" ><%= article.content %></textarea>
+            </div>
+            <div class="form-check mb-4">
+                <input type="checkbox" class="form-check-input" name="published" id="published" <%= article.publishedAt ? "checked" : "" %>>
+                <label class="form-check-label" for="published">Publish now</label>            
+            </div>
+            <input type="hidden" name="id" value="<%= article._id %>">
+            
+            <button class="btn btn-primary" type="submit">Update article</button>
+            <a role="button" href="/blog/my-articles" class="btn btn-danger">Cancel</a>
+        </form>
+    </div>
+  </main>
+
+
+  <!-- Modal -->
+  <div
+  class="modal fade"
+  id="imagePreview"
+  tabindex="-1"
+  aria-labelledby="imagePreviewLabel"
+  aria-hidden="true"
+  >
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="imagePreviewLabel">Preview</h5>
+        <button
+          type="button"
+          class="btn-close"
+          data-mdb-dismiss="modal"
+          aria-label="Close"
+        ></button>
+      </div>
+      
+      <div class="modal-body">      
+        <img src="" id="newImage" class="img-fluid shadow-1-strong rounded d-none" />      
+        <p id="noImage">No image selected.</p>
+        
+      </div>
+    </div>
+    </div>
+
+  <%- include('../includes/footer.ejs') %>
+  <%- include('../includes/image-preview-script.ejs') %>
+
+  
+</body>
+</html>

@@ -1,0 +1,317 @@
+  <%- include('./includes/header.ejs') %>
+  <meta name="csrf-token" content="<%= csrfToken %>" />
+  </head>
+
+  <body>
+    <header>
+      <%- include('./includes/navbar.ejs') %>
+
+      <!-- Jumbotron -->
+      <div class="p-5 text-center bg-light" style="margin-top: 58px">
+        <h1 class="my-1 h4"><%= article.title %></h1>
+      </div>
+      <!-- Jumbotron -->
+
+      <!-- Alert to show if article is published or not -->
+      <% if(!public && loggedIn && userId.toString() ===
+      article.author._id.toString() && !article.publishedAt) { %>
+      <div
+        class="alert alert-warning fade show text-center d-flex align-items-center justify-content-center"
+        role="alert"
+      >
+        <p class="m-0">This article hasn't been published yet.</p>
+      </div>
+      <% } else if(!public && loggedIn && userId.toString() ===
+      article.author._id.toString() && article.publishedAt){ %>
+      <div
+        class="alert alert-success fade show text-center d-flex align-items-center justify-content-center"
+        role="alert"
+      >
+        <p class="m-0">This article is already published.</p>
+      </div>
+      <% } %>
+      <!-- Alert to show if article is published or not -->
+
+      <!-- Flash messages -->
+      <div
+        id="flashMessage"
+        data-mdb-position="top-center"
+        data-mdb-hidden="true"
+        data-mdb-offset="64"
+        data-mdb-delay="5000"
+        data-mdb-autohide="true"
+        class="alert fade text-center d-flex align-items-center justify-content-center shadow-2-strong"
+        role="alert"
+      >
+        <p class="m-0"><!-- text here --></p>
+        <button type="button" class="close" onclick="hideMessage()">
+          <span aria-hidden="true" class="ms-4"
+            ><i class="fas fa-times"></i
+          ></span>
+        </button>
+      </div>
+      <!-- Flash messages -->
+    </header>
+
+    <!-- Main Layout -->
+    <main class="my-4">
+      <div class="container">
+        <div class="row">
+          <div class="col-lg-8 mb-4">
+            <!-- Post Data -->
+            <section id="post" class="border-bottom mb-4">
+              <img
+                src="<%= article.image %> "
+                alt="Feature image"
+                class="img-fluid shadow-2-strong rounded mb-4"
+                style="max-height: 400px"
+              />
+              <div class="row align-items-center mb-4">
+                <div class="col-md-6 text-center text-lg-left mb-3 m-lg-0">
+                  <img
+                    src="<%= article.author.profileImage %> "
+                    alt="<%= article.author.firstName + ' ' + article.author.lastName %> "
+                    class="rounded shadow-1-strong me-2"
+                    height="35"
+                  />
+                  <% if(!article.publishedAt) { %>
+                  <span>Unpublished article by</span>
+                  <% } else { %>
+                  <span
+                    >Published
+                    <u
+                      ><%= new Intl.DateTimeFormat('en-GB', { year: 'numeric',
+                      month: 'numeric', day:
+                      'numeric'}).format(article.publishedAt); %></u
+                    >
+                    by
+                  </span>
+                  <% } %>
+                  <a href="#" class="text-dark"
+                    ><%= article.author.firstName + ' ' +
+                    article.author.lastName %></a
+                  >
+                </div>
+                <div class="col-md-6 text-center text-lg-right">
+                  <!-- Like button -->
+                  <div class="d-inline">
+                    <button
+                      type="button"
+                      data-article="<%= article._id%>"
+                      onclick="<%= loggedIn ? 'likeArticle(this)' : 'showLoginModal()' %>"
+                      class="btn btn-floating <%= loggedIn && article.likes.includes(userId.toString()) ? 'btn-danger' : 'btn-outline-dark' %>"
+                    >
+                      <i class="fas fa-heart"></i>
+                    </button>
+                    <span class="me-2"><%= article.likes.length %></span>
+                  </div>
+                  <!-- Like button -->
+
+                  <!-- Comments -->
+                  <a
+                    class="btn btn-primary px-3 me-1"
+                    href="#reply"
+                    role="button"
+                  >
+                    <i class="fas fa-comments"></i>
+                  </a>
+                  <span id="totalCommentsFirst" class="me-2"
+                    ><%= article.comments.length %></span
+                  >
+                </div>
+              </div>
+            </section>
+            <!-- Post Data -->
+
+            <!-- Post Content -->
+            <section id="content" class="border-bottom mb-4">
+              <%- article.content %>
+            </section>
+            <!-- Post Content -->
+
+            <!-- Author Box -->
+            <section id="author" class="border-bottom mb-4 pb-4">
+              <div class="row">
+                <div class="col-md-3">
+                  <img
+                    src="<%= article.author.profileImage %>"
+                    alt="Author"
+                    class="img-fluid shadow-1-strong rounded"
+                  />
+                </div>
+                <div class="col-md-9">
+                  <p class="my-2">
+                    <strong
+                      ><%= article.author.firstName + ' ' +
+                      article.author.lastName %></strong
+                    >
+                  </p>
+                  <!-- Facebook -->
+                  <% if(article.author.socials.facebook) { %>
+                  <a
+                    class="text-dark"
+                    href="<%= article.author.socials.facebook %>"
+                    target="_blank"
+                    ><i class="fab fa-facebook-f me-1"></i
+                  ></a>
+                  <% } %>
+
+                  <!-- Twitter -->
+                  <% if(article.author.socials.twitter) { %>
+                  <a
+                    class="text-dark"
+                    href="<%= article.author.socials.twitter %>"
+                    target="_blank"
+                    ><i class="fab fa-twitter me-1"></i
+                  ></a>
+                  <% } %>
+
+                  <!-- Linkedin -->
+                  <% if(article.author.socials.linkedIn) { %>
+                  <a
+                    class="text-dark"
+                    href="<%= article.author.socials.linkedIn %>"
+                    target="_blank"
+                    ><i class="fab fa-linkedin-in me-1"></i
+                  ></a>
+                  <% } %>
+
+                  <p class="mt-2"><%= article.author.about %></p>
+                </div>
+              </div>
+            </section>
+            <!-- Author Box -->
+
+            <!-- Comments -->
+            <section id="comments" class="border-bottom mb-4">
+              <p class="text-center">
+                <strong
+                  >Comments:
+                  <span id="totalComments"
+                    ><%= article.comments.length %></span
+                  ></strong
+                >
+              </p>
+              <div id="commentOutput" data-article="<%= article._id %>"></div>
+              <button
+                class="btn btn-primary btn-block mb-4"
+                id="getCommentsBtn"
+                type="button"
+                onclick="getComments(this)"
+              ></button>
+            </section>
+            <!-- Comments -->
+
+            <!-- Reply -->
+            <section id="reply">
+              <p class="text-center"><strong>Leave a comment</strong></p>
+              <% if(!loggedIn) { %>
+              <p class="text-center">
+                You must be
+                <a
+                  role="button"
+                  class=""
+                  data-mdb-toggle="modal"
+                  data-mdb-target="#login"
+                  >logged in
+                </a>
+                to leave a comment.
+              </p>
+
+              <% } else { %>
+              <div>
+                <!-- Message input -->
+                <div class="form-outline mb-4">
+                  <textarea
+                    class="form-control"
+                    id="comment"
+                    name="message"
+                    rows="4"
+                  >
+<%= data.comment %></textarea
+                  >
+                  <label class="form-label" for="comment">Message</label>
+                </div>
+                <input
+                  type="hidden"
+                  name="article"
+                  value="<%= article._id %>"
+                />
+                <input type="hidden" name="author" value="<%= userId %>" />
+                <button
+                  type="button"
+                  onclick="addComment(this)"
+                  class="btn btn-primary btn-block mb-4"
+                >
+                  Send
+                </button>
+              </div>
+              <% } %>
+            </section>
+            <!-- Reply -->
+          </div>
+
+          <div class="col-lg-4 mb-4">
+            <!-- Sidebar -->
+            <section id="sidebar" class="sticky-top" style="top: 80px">
+              <div
+                class="d-flex justify-content-center align-items-center"
+                style="height: 200px; width: 100%"
+              >
+                <div class="spinner-border m-2" role="status"></div>
+                Loading...
+              </div>
+            </section>
+            <!-- Sidebar -->
+          </div>
+        </div>
+      </div>
+    </main>
+    <!-- Main Layout -->
+
+    <!-- Modal for deleting a comment-->
+    <div class="modal fade" id="deleteModal" tabindex="-1" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">Delete comment?</h5>
+            <button
+              type="button"
+              class="btn-close"
+              data-mdb-dismiss="modal"
+              aria-label="Close"
+            ></button>
+          </div>
+          <div class="modal-body">
+            <p>Please confirm you wish to delete this comment.</p>
+            <p>This action can't be undone.</p>
+          </div>
+          <div class="modal-footer">
+            <button
+              type="button"
+              class="btn btn-danger"
+              id="delete"
+              onclick="deleteComment(this)"
+              data-mdb-dismiss="modal"
+            >
+              Delete
+            </button>
+            <button
+              type="button"
+              class="btn btn-primary"
+              data-mdb-dismiss="modal"
+            >
+              Cancel
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- Modal for deleting a comment-->
+
+    <%- include('./includes/footer.ejs') %>
+
+    <script src="/js/flash-messages.js"></script>
+    <script src="/js/article.js"></script>
+  </body>
+</html>

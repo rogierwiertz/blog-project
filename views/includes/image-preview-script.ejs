@@ -1,0 +1,56 @@
+<script>
+
+  document.addEventListener('DOMContentLoaded', () => {
+
+      const newImage = document.getElementById('newImage');
+      const noImage = document.getElementById('noImage');
+      let fileInDatabase;
+
+
+      // Check for image url in database
+      <% if(locals.article && locals.article.image) { %>
+        fileInDatabase = '<%= article.image %>';
+        newImage.src = fileInDatabase;
+        newImage.classList.remove('d-none');
+        noImage.classList.add('d-none');
+      <% } else if(locals.user && locals.user.profileImage) { %>
+        fileInDatabase = '<%= user.profileImage %>';
+        newImage.src = fileInDatabase;
+        newImage.classList.remove('d-none');
+        noImage.classList.add('d-none');
+      <% } else { %>
+        fileInDatabase = null;
+      <% }%>
+
+      document.getElementById('image').addEventListener('change', (ev) => {
+
+        const file = ev.target.files[0];
+
+        // if no file is selected
+        if(!file) {
+            if (fileInDatabase)  {
+              newImage.src = fileInDatabase;
+            } else {
+              newImage.src = '';
+              newImage.classList.add('d-none');
+              noImage.classList.remove('d-none');
+            }
+            return;
+       }
+      
+        newImage.classList.remove('d-none');
+        noImage.classList.add('d-none');
+
+        setPreviewImage(file);
+      });
+
+      // Set Preview Image to file on input
+      const setPreviewImage = (file) => {
+          let fr = new FileReader();
+          fr.onload = () => {
+            newImage.src = fr.result;
+          };
+          fr.readAsDataURL(file);
+      }
+  });
+</script>

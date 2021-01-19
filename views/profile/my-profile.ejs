@@ -1,0 +1,156 @@
+<!-- <link rel="stylesheet" href="/css/profile.css" /> -->
+
+<%- include('../includes/header.ejs') %>
+</head>
+
+<body>
+  <header>
+    <%- include('../includes/navbar.ejs') %>
+
+    <!-- Jumbotron -->
+    <div class="p-5 text-center bg-light" style="margin-top: 58px">
+      <h1 class="my-1 h4">Profile</h1>
+    </div>
+    <!-- Jumbotron --> 
+    
+  </header>
+
+
+  
+  <!-- Main Layout -->
+  <main class="my-4">
+    <div class="container">
+          
+            <img
+            id="newImage"
+            src=""
+            class="img-fluid shadow-2-strong rounded mb-4 d-none"
+            style="height: 200px;"
+            alt="Profile picture"            
+            />
+            <p id="noImage" class="d-none">No image selected.</p>
+          
+            
+
+            <% if( flashMessage ) { %>
+              <div class="alert alert-warning my-4" role="alert">
+                  <p class="mb-0"><%= flashMessage %></p>
+              </div>        
+            <% } %> 
+      
+        
+        
+
+            <form action="/profile/update-profile" method="POST" class="mb-4">
+              <h5 class="m-4 ml-0">User info</h5>
+            <!-- 2 column grid layout with text inputs for the first and last names -->
+            <div class="row mb-4">
+              <div class="col-md-6 mb-4 mb-md-0">
+                <div class="form-outline">
+                  <input type="text" id="firstName" name="firstName" class="form-control" value="<%= user.firstName %>"<%= !editMode ? 'disabled' : "" %> />
+                  <label class="form-label" for="firstName">First name</label>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="form-outline">
+                  <input type="text" id="lastName" name="lastName" class="form-control" value="<%= user.lastName %>"<%= !editMode ? 'disabled' : "" %> />
+                  <label class="form-label" for="lastName">Last name</label>
+                </div>
+              </div>
+            </div>
+          
+            <!-- Email input -->
+            <div class="form-outline mb-4">
+              <input type="email" id="email" name="email" class="form-control" value="<%= user.email %>" <%= !editMode ? 'disabled' : "" %> />
+              <label class="form-label" for="email">Email address</label>
+            </div>
+          
+            
+
+            <div class="form-outline mb-4">
+                <textarea class="form-control" name="about" id="about" rows="4" <%= !editMode ? 'disabled' : "" %>><%= user.about %></textarea>
+                <label class="form-label" for="about">About me</label>
+             </div>
+            
+            <!-- Facebook url -->
+            <div class="form-outline mb-4">
+              <input type="text" id="facebook" name="facebook" class="form-control" value="<%= user.socials.facebook %>" <%= !editMode ? 'disabled' : "" %> />
+              <label class="form-label" for="facebook">Facebook Profile link</label>
+            </div>
+
+            <!-- LinkedIn url -->
+            <div class="form-outline mb-4">
+              <input type="text" id="linkedIn" name="linkedIn" class="form-control" value="<%= user.socials.linkedIn %>" <%= !editMode ? 'disabled' : "" %> />
+              <label class="form-label" for="linkedIn">LinkedIn Profile link</label>
+            </div>
+
+             <!-- Twitter url -->
+             <div class="form-outline mb-4">
+              <input type="text" id="twitter" name="twitter" class="form-control" value="<%= user.socials.twitter %>" <%= !editMode ? 'disabled' : "" %> />
+              <label class="form-label" for="twitter">Twitter Profile link</label>
+            </div>
+            
+
+
+            <!-- CSFR input -->
+            <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+
+            <!-- Submit button -->
+            
+            <% if(editMode) { %>
+            <div class="d-flex justify-content-end w-100">
+              <a role="button" href="/profile/my-profile" class="btn btn-danger ml-2">Cancel</a>
+              <button type="submit" class="btn btn-primary ml-2">
+                Save changes
+              </button> 
+            </div>
+            <% } else { %>
+              <div class="d-flex justify-content-end">
+                
+                <a role="button" href="/profile/my-profile?edit=true" class="btn btn-warning">Edit info</a>
+              </div>
+            <% } %>         
+            
+          </form>
+          <hr>
+          <h5 class="m-4 ml-0">Account</h5>
+          <div class="d-flex mb-4">                
+            <a role="button" href="/profile/change-password" class="btn btn-light mb-2">Change password</a>
+            <a role="button" href="/profile/delete-account" class="btn btn-dark ml-2 mb-2">Delete account</a>
+          </div>
+          <hr>
+
+          <h5 class="m-4 ml-0">Profile image</h5>
+          <form action="/profile/upload-image?_csrf=<%= csrfToken %>" method="POST" enctype="multipart/form-data">
+            <!-- File input -->
+            <div class="row mb-4 d-flex align-items-end">
+              <div class="col-md-8">
+                
+                <input class="form-control" type="file" name="image" id="image"  >
+              </div>
+              <div class="col-md-4 mt-4 my-md-0">
+                <button class="btn btn-primary w-100">Upload image</button>
+              </div>
+          </div>
+          </form>
+          <% if (user.profileImage) { %>
+            <form action="/profile/delete-image" method="POST" class="ml-1">
+              <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+              <button class="btn btn-light mb-2">Delete image</button>
+            </form>
+            <% } %>
+        <hr>
+    </div>
+
+ 
+  </main>
+  <!-- Main Layout -->
+
+
+
+  
+
+  <%- include('../includes/footer.ejs') %>
+  <%- include('../includes/image-preview-script.ejs') %>
+</body>
+</html>

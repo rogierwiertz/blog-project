@@ -1,0 +1,110 @@
+<%- include('./includes/header.ejs') %>
+<link rel="stylesheet" href="/css/profile.css" />
+<head> 
+
+<body>
+  <header>
+    <%- include('./includes/navbar.ejs') %>
+
+    <!-- Background image -->
+    <div
+      class="p-5 text-center bg-image"
+      style="
+        background-image: url('/img/banner.jpg');
+        height: 400px;
+        margin-top: 45px;
+      "
+    >
+      <div class="mask" style="background-color: rgba(0, 0, 0, 0.6)">
+        <div class="d-flex justify-content-center align-items-center h-100">
+          <div class="text-white">
+            <h1 class="mb-3">Dev Blog</h1>
+            <h4 class="mb-3">Web development is a great journey</h4>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- Background image -->
+  </header>
+  
+  <!-- Main Section -->
+  <main class="my-4">
+    <!-- Articles -->
+    <section id="articles" class="text-center mb-4">
+      <div class="container">
+        <div class="row">
+          <% if(articles.length === 0) { %>
+            <h4>No articles found.</h4>
+          <% } %>
+        <% articles.forEach( article => { %> 
+          <div class="col-md-6 col-xl-4 my-4 ">
+            <div
+              class="bg-image hover-overlay ripple shadow-1-strong rounded mb-4"
+              data-ripple-color="light"
+              style="width: fit-content; max-height: 300px; margin: auto;"
+            >
+            <div class="d-flex pt-2 ps-2 rounded" style="position: absolute; bottom: 5px; right: 5px; background-color: rgba(0, 0, 0, 0.6);">
+              <span class="text-danger me-1 h6" ><i class="fas fa-heart "></i></span>
+              <span class="me-2 h6 text-light" ><%= article.likes.length %></span>  
+              <span class="text-info me-1 h6" ><i class="fas fa-comments"></i></span>
+              <span class="me-2 h6 text-light" ><%= article.comments.length %></span>  
+            </div>
+            <img src="<%= article.image ? article.image : '/img/a1.jpg' %>" class="" style="max-height: 300px; max-width: 100%;"/>
+              
+              <a href="/article/<%= article._id %>">
+                <div
+                  class="mask d-flex justify-content-end align-items-end"
+                  style="background-color: rgba(251, 251, 251, 0.2)"
+                >                
+              </div>
+              </a>
+            </div>
+            <h5><%= article.title %></h5>
+            <p><%= article.description %></p>
+            <a href="/article/<%= article._id %>" role="button" class="btn btn-info btn-rounded">
+              Read more
+            </a>
+          </div>
+        <% }); %> 
+        </div>
+      </div>
+    </section>
+    <!-- Articles -->
+    <% if(articles.length !== 0) { %>
+    <!-- Pagination -->
+    <section id="pagination" class="d-flex justify-content-center">
+      <nav aria-label="Article pages">
+        <ul class="pagination pagination-circle">
+          
+          <li class="page-item <%= !hasPreviousPage ? 'disabled' : '' %>">
+            <a class="page-link" href="?page=<%= previousPage %>" tabindex="-1" aria-disabled="true"
+              >Previous</a
+            >
+          </li>
+        <% if(currentPage !== 1) { %> 
+          <li class="page-item"><a class="page-link" href="?page=1">1</a></li>
+        <% } %>
+          <li class="page-item active" aria-current="page">
+            <a class="page-link" href="?page=<%= currentPage %>"
+              ><%= currentPage %> <span class="visually-hidden">(current)</span></a
+            >
+          </li>
+          <% if(currentPage !== lastPage && currentPage !== 1) { %> 
+          <li class="page-item"><a class="page-link" href="?page=<%= lastPage %>"><%= lastPage %></a></li>
+          <% } %>
+          
+          <li class="page-item <%= !hasNextPage ? 'disabled' : '' %>">
+            <a class="page-link" href="?page=<%= nextPage %>">Next</a>
+          </li>
+          
+        </ul>
+      </nav>
+    </section>
+    <% } %>
+    <!-- Pagination -->
+  </main>
+  <!-- Main Section -->
+
+  <%- include('./includes/footer.ejs') %>
+</body>
+</html>

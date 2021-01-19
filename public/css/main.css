@@ -1,0 +1,27 @@
+.banner {
+    background-image: url('/img/banner.jpg');
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: cover;
+    position: relative;
+    z-index: 0;
+    overflow: hidden;
+}
+.banner-overlay {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: #111;
+    opacity: 0.3;
+    z-index: -1;
+}
+
+.bg-semi {
+    background-color: rgb(255, 255, 255, 0.9);
+}
+
+.image-preview {
+    width: 4rem;
+}

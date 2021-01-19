@@ -1,0 +1,38 @@
+<script src="https://cdn.tiny.cloud/1/no-api-key/tinymce/5/tinymce.min.js" referrerpolicy="origin"></script>
+<script>
+tinymce.init({
+  selector:'textarea', 
+  branding: false,
+  plugins: "image autolink link charmap emoticons fullscreen", 
+  toolbar: 'undo redo | bold italic underline | emoticons charmap image | fullscreen',
+  style_formats: [
+  { title: 'Headings', items: [        
+    { title: 'Heading 5', format: 'h5' },
+    { title: 'Heading 6', format: 'h6' }
+  ]},
+  { title: 'Inline', items: [
+    { title: 'Bold', format: 'bold' },
+    { title: 'Italic', format: 'italic' },
+    { title: 'Underline', format: 'underline' },
+    { title: 'Strikethrough', format: 'strikethrough' },        
+    { title: 'Code', format: 'code' }
+  ]},
+  { title: 'Blocks', items: [
+    { title: 'Paragraph', format: 'p' },
+    { title: 'Blockquote', block: 'blockquote', classes: 'blockquote' },      
+  ]},
+  { title: 'Notes', items: [
+  { title: 'Primary', block: 'p', classes: 'note note-primary'},
+  { title: 'Light', block: 'p', classes: 'note note-light'},
+  { title: 'Info', block: 'p', classes: 'note note-info'},
+    
+  ]},     
+],           
+  extended_valid_elements: [
+    'blockquote[class]',
+    'p[class]',
+    'img[class=shadow-1-strong rounded|src|alt|width|height|title]'
+  ],
+  content_css: 'https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/2.2.1/mdb.min.css',      
+});
+</script>
