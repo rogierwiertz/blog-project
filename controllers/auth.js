@@ -1,33 +1,31 @@
-const crypto = require("crypto");
+const crypto = require('crypto');
 
-const User = require("../models/user");
-const bcrypt = require("bcryptjs");
-const { validationResult } = require("express-validator");
-const { prepareError } = require("../utils/errors");
-const mail = require("@sendgrid/mail");
+const User = require('../models/user');
+const bcrypt = require('bcryptjs');
+const { validationResult } = require('express-validator');
+const { prepareError } = require('../utils/errors');
+const mail = require('@sendgrid/mail');
 const mongoose = require('mongoose');
-mail.setApiKey(
-  process.env.MAIL_API_KEY
-);
+mail.setApiKey(process.env.MAIL_API_KEY);
 
 // GET /login
 exports.getLogin = (req, res) => {
-  let msg = req.flash("error");
+  let msg = req.flash('error');
   if (msg.length > 0) {
     msg = msg[0];
   } else {
     msg = null;
   }
-  let email = req.flash("email");
+  let email = req.flash('email');
   if (email.length > 0) {
     email = email[0];
   } else {
     email = null;
   }
 
-  res.render("auth/login.ejs", {
-    title: "Login page",
-    path: "/login",
+  res.render('auth/login-dummy.ejs', {
+    title: 'Login page',
+    path: '/login',
     data: {
       email: email,
     },
@@ -40,78 +38,107 @@ exports.postLogin = (req, res, next) => {
   // user input
   const email = req.body.email;
   const password = req.body.password;
-  const rememberMe = req.body.remember === "on" ? true : false;
+  const rememberMe = req.body.remember === 'on' ? true : false;
 
   //validation of user input
   const errors = validationResult(req);
 
   if (!errors.isEmpty()) {
-    req.flash("error", errors.array()[0].msg);
-    req.flash("email", email);
-    res.redirect("/login");
+    req.flash('error', errors.array()[0].msg);
+    req.flash('email', email);
+    res.redirect('/login');
     return;
   }
-  
+
   // authorisation
   User.findOne({ email: email })
     .then((user) => {
       if (!user || !bcrypt.compareSync(password, user.password)) {
-        req.flash("error", "Wrong email or password.");
-        req.flash("email", email);
-        res.redirect("/login");
+        req.flash('error', 'Wrong email or password.');
+        req.flash('email', email);
+        res.redirect('/login');
       } else {
-        if(rememberMe) {
+        if (rememberMe) {
           req.session.cookie.maxAge = 1000 * 60 * 60 * 24 * 7;
-        }        
+        }
         req.session.isLoggedIn = true;
         req.session.user = {};
         req.session.user._id = user._id;
-        req.session.user.name = user.firstName + " " + user.lastName;
+        req.session.user.name = user.firstName + ' ' + user.lastName;
         req.session.save((err) => {
           if (err) {
             console.log(err);
           }
-          res.redirect("/");
+          res.redirect('/');
         });
       }
     })
     .catch((err) => next(err));
 };
+
+// GET /dummy-login
+exports.getDummyLogin = (req, res) => {
+  
+  req.session.isLoggedIn = true;
+  req.session.isDummyUser = true;
+  req.session.user = {
+    _id: '604e5b533ac8d52bbc079ab4',
+    name: 'Dummy User'
+  };
+  
+  req.session.save((err) => {
+    if (err) {
+      console.log(err);
+    }
+    res.redirect('/');
+  });
+};
+
 // GET /logout
 exports.getLogout = (req, res) => {
   req.session.destroy((err) => {
     if (err) {
       console.log(err);
     }
-    res.redirect("/");
+    res.redirect('/');
   });
 };
 
 // GET /signup
-exports.getSignup = (req, res) => {
-  let msg = req.flash("error");
-  if (msg.length > 0) {
-    msg = msg[0];
-  } else {
-    msg = null;
-  }
-  let userInput = req.flash("data");
-  
-  if (userInput.length > 0) {
-    userInput = {
-      firstName: userInput[0],
-      lastName: userInput[1],
-      email: userInput[2],
-    };
-  } else {
-    userInput = null;
-  }
+// exports.getSignup = (req, res) => {
+//   let msg = req.flash("error");
+//   if (msg.length > 0) {
+//     msg = msg[0];
+//   } else {
+//     msg = null;
+//   }
+//   let userInput = req.flash("data");
 
-  res.render("auth/signup.ejs", {
-    title: "Signup page",
-    path: "/signup",
-    data: userInput,
-    flashMessage: msg,
+//   if (userInput.length > 0) {
+//     userInput = {
+//       firstName: userInput[0],
+//       lastName: userInput[1],
+//       email: userInput[2],
+//     };
+//   } else {
+//     userInput = null;
+//   }
+
+//   res.render("auth/signup.ejs", {
+//     title: "Signup page",
+//     path: "/signup",
+//     data: userInput,
+//     flashMessage: msg,
+//   });
+// };
+
+// GET /signup DUMMY
+exports.getSignup = (req, res) => {
+  res.render('auth/signup-dummy.ejs', {
+    title: 'Signup page',
+    path: '/signup',
+    data: null,
+    flashMessage: null,
   });
 };
 
@@ -122,15 +149,15 @@ exports.postSignup = (req, res, next) => {
   const lastName = req.body.lastName;
   const email = req.body.email;
   const password = req.body.password;
-  const stdProfileImage = "/img/no-profile-image.jpg";
+  const stdProfileImage = '/img/no-profile-image.jpg';
 
   //validation of user input
   const errors = validationResult(req);
 
   if (!errors.isEmpty()) {
-    req.flash("error", errors.array()[0].msg);    
-    req.flash("data", [firstName, lastName, email]);    
-    res.redirect("/signup");
+    req.flash('error', errors.array()[0].msg);
+    req.flash('data', [firstName, lastName, email]);
+    res.redirect('/signup');
     return;
   }
 
@@ -138,11 +165,11 @@ exports.postSignup = (req, res, next) => {
   User.findOne({ email: email })
     .then((user) => {
       if (user) {
-        req.flash("error", "Email already taken.");
-        req.flash("data", firstName);
-        req.flash("data", lastName);
-        req.flash("data", email);
-        res.redirect("/signup");
+        req.flash('error', 'Email already taken.');
+        req.flash('data', firstName);
+        req.flash('data', lastName);
+        req.flash('data', email);
+        res.redirect('/signup');
         return;
       } else {
         const hashedPassword = bcrypt.hashSync(password, 12);
@@ -157,12 +184,12 @@ exports.postSignup = (req, res, next) => {
           req.session.isLoggedIn = true;
           req.session.user = {};
           req.session.user._id = user._id;
-          req.session.user.name = user.firstName + " " + user.lastName;
+          req.session.user.name = user.firstName + ' ' + user.lastName;
           req.session.save((err) => {
             if (err) {
               console.log(err);
             }
-            res.redirect("/");
+            res.redirect('/');
           });
         });
       }
@@ -172,22 +199,22 @@ exports.postSignup = (req, res, next) => {
 
 // GET /forgot-password
 exports.getForgotPassword = (req, res) => {
-  let msg = req.flash("error");
+  let msg = req.flash('error');
   if (msg.length > 0) {
     msg = msg[0];
   } else {
     msg = null;
   }
-  let email = req.flash("email");
+  let email = req.flash('email');
   if (email.length > 0) {
     email = email[0];
   } else {
     email = null;
   }
 
-  res.render("auth/forgot-password.ejs", {
-    title: "Forgot Password",
-    path: "/forgot-password",
+  res.render('auth/forgot-password.ejs', {
+    title: 'Forgot Password',
+    path: '/forgot-password',
     flashMessage: msg,
     data: {
       email: email,
@@ -200,27 +227,27 @@ exports.postForgotPassword = (req, res, next) => {
   // user input
   const email = req.body.email;
   if (!email) {
-    req.flash("error", "Please enter your email.");
-    return res.redirect("/forgot-password");
+    req.flash('error', 'Please enter your email.');
+    return res.redirect('/forgot-password');
   }
   crypto.randomBytes(32, (err, buffer) => {
     if (err) {
-      return res.redirect("/forgot-password");
+      return res.redirect('/forgot-password');
     }
-    const token = buffer.toString("hex");
+    const token = buffer.toString('hex');
 
     User.findOne({ email: email })
       .then((user) => {
         if (!user) {
-          req.flash("error", "Email not found.");
-          req.flash("email", email);
-          return res.redirect("/forgot-password");
+          req.flash('error', 'Email not found.');
+          req.flash('email', email);
+          return res.redirect('/forgot-password');
         }
         user.resetToken = token;
         user.resetTokenExpiration = Date.now() + 1000 * 60 * 60;
         return user.save().then((result) => {
-          req.flash("error", "You recieved an email with a reset link.");
-          res.redirect("/login");
+          req.flash('error', 'You recieved an email with a reset link.');
+          res.redirect('/login');
         });
       })
       .catch((err) => next(err));
@@ -228,7 +255,7 @@ exports.postForgotPassword = (req, res, next) => {
     mail.send({
       from: process.env.EMAIL_FROM,
       to: req.body.email,
-      subject: "Reset your password",
+      subject: 'Reset your password',
       html: `
             <h1>Blog Project</h1>
             <p>You requested a password reset.</p>
@@ -245,18 +272,18 @@ exports.getResetPassword = (req, res, next) => {
   User.findOne({ resetToken: token, resetTokenExpiration: { $gt: Date.now() } })
     .then((user) => {
       if (!user) {
-        req.flash("error", "Invalid token. Please request a new one.");
-        return res.redirect("/forgot-password");
+        req.flash('error', 'Invalid token. Please request a new one.');
+        return res.redirect('/forgot-password');
       }
-      let msg = req.flash("error");
+      let msg = req.flash('error');
       if (msg.length > 0) {
         msg = msg[0];
       } else {
         msg = null;
       }
-      res.render("auth/update-password.ejs", {
-        title: "Reset Password",
-        path: "/update-password",
+      res.render('auth/update-password.ejs', {
+        title: 'Reset Password',
+        path: '/update-password',
         flashMessage: msg,
         passwordToken: token,
         userId: user ? user._id.toString() : null,
@@ -269,21 +296,21 @@ exports.getResetPassword = (req, res, next) => {
 exports.postResetPassword = (req, res, next) => {
   // user inpput
   const token = req.body.passwordToken;
-  const userId =req.body.userId;
-  
+  const userId = req.body.userId;
+
   const password = req.body.password;
   const confirmPassword = req.body.confirmPassword;
 
-  if(!mongoose.isValidObjectId(userId)) {
+  if (!mongoose.isValidObjectId(userId)) {
     throw prepareError('There was an error. Please try again.', 500);
   }
   //validation of user input
   if (!password || !confirmPassword) {
-    req.flash("error", "All fields are required.");
+    req.flash('error', 'All fields are required.');
     res.redirect(`/reset-password/${token}`);
     return;
   } else if (password !== confirmPassword) {
-    req.flash("error", "Passwords don't match.");
+    req.flash('error', "Passwords don't match.");
     res.redirect(`/reset-password/${token}`);
     return;
   }
@@ -294,7 +321,7 @@ exports.postResetPassword = (req, res, next) => {
     resetTokenExpiration: { $gt: Date.now() },
   })
     .then((user) => {
-      if(!user) {
+      if (!user) {
         throw prepareError('User not found.', 500);
       }
       updatedUser = user;
@@ -307,14 +334,14 @@ exports.postResetPassword = (req, res, next) => {
       return updatedUser.save();
     })
     .then((result) => {
-      if(!result) {
+      if (!result) {
         throw prepareError('There was an error.', 500);
       }
       req.flash(
-        "error",
-        "Your password was succesfully updated. You can now log in."
+        'error',
+        'Your password was succesfully updated. You can now log in.'
       );
-      res.redirect("/login");
+      res.redirect('/login');
     })
     .catch((err) => next(err));
 };
