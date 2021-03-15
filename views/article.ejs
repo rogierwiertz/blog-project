@@ -1,5 +1,7 @@
   <%- include('./includes/header.ejs') %>
   <meta name="csrf-token" content="<%= csrfToken %>" />
+  <link rel="stylesheet" type="text/css" href="/css/prism.css">
+  <script src="/js/prism.js"></script>
   </head>
 
   <body>
@@ -63,8 +65,7 @@
               <img
                 src="<%= article.image %> "
                 alt="Feature image"
-                class="img-fluid shadow-2-strong rounded mb-4"
-                style="max-height: 400px"
+                class="img-fluid shadow-2-strong rounded mb-4 article-image"
               />
               <div class="row align-items-center mb-4">
                 <div class="col-md-6 text-center text-lg-left mb-3 m-lg-0">
@@ -131,15 +132,16 @@
 
             <!-- Author Box -->
             <section id="author" class="border-bottom mb-4 pb-4">
-              <div class="row">
-                <div class="col-md-3">
+              
+              <div class="row ">
+                <div class="col-md-3 d-flex justify-content-center">
                   <img
                     src="<%= article.author.profileImage %>"
                     alt="Author"
-                    class="img-fluid shadow-1-strong rounded"
+                    class="img-fluid shadow-1-strong rounded author-box__image"
                   />
                 </div>
-                <div class="col-md-9">
+                <div class="col-md-9 author-box__text">
                   <p class="my-2">
                     <strong
                       ><%= article.author.firstName + ' ' +
@@ -179,6 +181,7 @@
                   <p class="mt-2"><%= article.author.about %></p>
                 </div>
               </div>
+              
             </section>
             <!-- Author Box -->
 

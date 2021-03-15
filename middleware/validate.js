@@ -27,6 +27,7 @@ const xssPrevention = (value) => {
     const whitelist = xss.whiteList;
     whitelist.p = ['class'];
     whitelist.blockquote = ['class'];
+    whitelist.pre = ['class'];
     whitelist.span = ['style'];
     whitelist.img = ['src', 'alt', 'title', 'width', 'height', 'class'];
     // console.log(whitelist);
