@@ -257,7 +257,7 @@ exports.postForgotPassword = (req, res, next) => {
       to: req.body.email,
       subject: 'Reset your password',
       html: `
-            <h1>Blog Project</h1>
+            <h1>Developers Blog</h1>
             <p>You requested a password reset.</p>
             <p>Click <a href="http://localhost:3000/reset-password/${token}">this link</a> to reset your password.</p>
             <p style="color: red">Link will expire in one hour.</p>`,

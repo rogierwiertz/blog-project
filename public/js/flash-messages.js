@@ -10,13 +10,11 @@ const displayMessage = (string, error = false) => {
         flashMessage.classList.add('alert-success')
         flashMessage.classList.remove('alert-danger');
     }
-    mdb.Alert.getInstance(flashMessage).show();
-    // flashMessage.classList.remove('d-none');
+    mdb.Alert.getInstance(flashMessage).show();    
 }
 const hideMessage = () => {
     flashMessage.querySelector('p').innerText = '';
     flashMessage.classList.remove('alert-danger');
     mdb.Alert.getInstance(flashMessage).hide();
-    // flashMessage.classList.add('d-none');
 }
 
